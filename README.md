@@ -52,11 +52,11 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 
 用any把参数类型抹除，就能添加进函数里，any也能检测类型，回调给编辑器的参数修改，大大减少代码量。
 
-<span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会“基因突变”，（造成闪退，崩溃等问题），如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉</span>
-
 <p align="center">
-<img src="" width="850" alt="Sfaui编辑器演示">
+<img src="https://github.com/user-attachments/assets/016ce36f-ebe0-4e87-9fd0-30a13c0b27f1" width="850" alt="Sfaui编辑器演示2">
 </p>
+
+<span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会“基因突变”，（造成闪退，崩溃等问题），如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉</span>
 
 # 环境依赖和使用
 
