@@ -1,5 +1,5 @@
 # Sfaui-Editor
-SkyC for android imgui editor
+Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 
 
 Sfaui-Editor
  
