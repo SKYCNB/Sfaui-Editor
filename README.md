@@ -87,17 +87,7 @@ int main()
  ```
 
 # 仓库文件说明
-如果开发者们的项目中能运行imgui，直接下载Sfaui文件整合包即可，不需要下载这里的imgui文件，最后链接Sfaui库即可，如需要dx11或opengles渲染方式使用Sfaui的实例，请进入 example 文件夹寻找对应实例
+如果开发者们的项目中能运行imgui，直接下载Sfaui文件整合包和cmake即可，不需要下载这里的imgui文件，最后链接Sfaui库即可，如需要dx11或opengles渲染方式使用Sfaui的实例，请进入 example 文件夹寻找对应实例
 
-如果开发者在安卓平台上使用Sdl - opengles 的渲染方式，且imgui不能显示画面，可以找到这里imgui文件夹里的
- 
-开发规划
- 
-完善批量多选编辑功能
-新增渐变控件、自定义曲线UI
-优化安卓端内存占用，修复大工程卡顿
-增加工程版本兼容，支持新旧存档互通
- 
-作者
- 
-SKYCNB
+如果开发者在安卓平台上使用Sdl - opengles 的渲染方式，且imgui不能显示画面，可以下载这里imgui文件夹里的 imgui_impl_opengl.h/.cpp文件
+
