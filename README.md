@@ -1,20 +1,12 @@
-# Sfaui-Editor
-
-# 项目简介
- 
-Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui 开发、适配 Windows / Android 双平台的轻量可视化UI编辑器。是一个c++11的可嵌入项目，无需手写大量ImGui绘制代码，通过实时调整参数快速生成界面数据 ，内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、等，有多选，插入，删除等操作。
-能为imgui的ui项目快速打草稿，生成代码，也是为开发imgui的Ui项目的新手快速接触imgui的函数和功能，排版等，专门辅助使用手机编辑器的开发者在imgui的ui项目上编辑困难的短板。
-
-
-
-<p align="center">
-<img src="https://github.com/user-attachments/assets/fcdb03a1-a936-458b-8f4b-b6ac1a8f0562" width="850" alt="Sfaui编辑器演示">
-</p>
- 
-
-# 特性和原理
-编辑器获取和修改imgui的每个函数的参数数据来自动生成imgui的函数效果。
-本编辑器是按照imgui排版流水的规律，以及它统一的函数名称开发而来。由于Imgui的函数参数数量和类型不统一,所以编辑器按照生物的 mRNA , tRNA 之间的翻译操作的灵感，使用c++的any库，解决了参数不统一的问题
+Sfaui-Editor
+Project Introduction
+Sfaui-Editor, short for SkyC for Android ImGui Editor, is a lightweight visual UI editor built on Dear ImGui that supports both Windows and Android platforms. It is an embeddable C++11 library. Developers no longer need to write massive ImGui rendering code manually; they can rapidly generate UI data by tweaking parameters in real time.
+It comes with a full suite of native ImGui widgets including rectangles, images, text, buttons, child panels, and supports common operations such as multi-selection, insertion and deletion.
+This tool serves multiple purposes: rapidly drafting ImGui interfaces and exporting corresponding code, lowering the learning curve for ImGui beginners to grasp ImGui functions, features and layout rules, and resolving the pain point of inconvenient UI editing for developers building ImGui-based mobile applications.
+<p align="center"> <img src="https://github.com/user-attachments/assets/fcdb03a1-a936-458b-8f4b-b6ac1a8f0562" width="850" alt="Sfaui Editor Demo"> </p>
+Core Features & Design Principles
+The editor reads and modifies parameter values of every ImGui function to replicate its rendering output automatically.
+It is developed around ImGui’s fixed layout pipeline and standardized function naming convention. Since ImGui functions vary wildly in parameter count and data types, the editor draws inspiration from mRNA and tRNA translation mechanisms in biology and leverages C++ std::any (nonstd::any) to unify heterogeneous parameter storage.
 ```cpp
 // data
    {
@@ -50,27 +42,18 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
                 break;
 ```
 
-用any把参数类型抹除，就能添加进函数里，any也能检测类型，回调给编辑器的参数修改，大大减少代码量。
+any erases concrete parameter types to enable unified storage for all function arguments. It also supports runtime type checking to feed modified values back to the editor’s parameter panel, drastically cutting down boilerplate code.
+<p align="center"> <img src="https://github.com/user-attachments/assets/016ce36f-ebe0-4e87-9fd0-30a13c0b27f1" width="850" alt="Sfaui Editor Demo 2"> </p>
+Limitations
+Due to the inherent characteristics of any, pointer-type parameters cannot be safely validated. Mismatched value types during parameter editing cause "gene mutation" errors, resulting in crashes and runtime failures.
+The editor enforces the exact same layout stack rules as raw ImGui. Invalid nesting (e.g., nesting BeginMainMenuBar inside another BeginMainMenuBar) will trigger ImGui debug warnings; on Android builds without debug tools, such malformed layouts lead to immediate crashes. Developers are advised to save project files frequently to avoid data loss from unexpected failures.
+The editor only supports static layout generation. It cannot handle widgets that require conditional if branches to render correctly (e.g., ImGui::MenuItem("XXX")). It is not recommended for large monolithic UIs; split your interface into smaller modular blocks and integrate the exported code snippets separately into your project.
+While most basic data types are supported, pointer parameters are not fully handled. Exported code is pseudocode that requires manual revision or AI-assisted adjustments to become fully executable.
+If embedding this editor causes crashes or disrupts your project workflow, please remove all Sfaui-related source files immediately. The author apologizes for any inconvenience this may cause.
+Environment Dependencies & Integration Guide
+C++11
 
-<p align="center">
-<img src="https://github.com/user-attachments/assets/016ce36f-ebe0-4e87-9fd0-30a13c0b27f1" width="850" alt="Sfaui编辑器演示2">
-</p>
-
-缺点：1.由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，修改参数数据时，会“基因突变”，（造成闪退，崩溃等问题）
-
-2.编辑器生成的布局规则和imgui的布局规则是一样的，如果在编辑器中搞一个错误的布局顺序会导致imgui弹出错误提示，比如BeginMainMenuBar里创建BeginMainMenuBar等不规范排版，在安卓上有些编辑器没有debug更是直接闪退，所以开发者也许要时刻记得保存项目避免突然闪退和崩溃带来的损失
-
-3.编辑器仅仅支持静态排版，不支持需要进入分支后才能绘制的函数，比如ImGui::MenuItem("XXX");等。所以不推荐做大型Ui，推荐做细分各个部分小块Ui，把生成的每块ui代码合到自己项目中
-
-4.编辑器适配了大部分类型，但不支持指针类型，所以生成代码是伪代码，可能有些参数需要开发者使用AI或自行补充和修改，最终才能改成可执行代码
-                               
-如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉
-
-# 环境依赖和使用
-
-- C++11
-- 
-编辑器是可嵌入项目，凡是能运行imgui的地方，都可以使用Sfaui-ed，编辑器只公开了三个函数接口，开发者只需调用Sfaui.h,和三个函数即可
+The editor is fully embeddable into any project that runs Dear ImGui. It only exposes three simple public APIs via Sfaui.h.
  ```cpp
 ...
 #include "Sfaui.h"
@@ -98,9 +81,8 @@ int main()
 ...
     }
  ```
-
-# 仓库文件说明
-如果开发者们的项目中能运行imgui，直接下载Sfaui文件整合包和cmake即可，不需要下载这里的imgui文件，最后链接Sfaui库即可，如需要dx11或opengles渲染方式使用Sfaui的实例，请进入 example 文件夹寻找对应实例
-
-如果开发者在安卓平台上使用Sdl - opengles 的渲染方式，且imgui不能显示画面，可以下载这里imgui文件夹里的 imgui_impl_opengl.h/.cpp文件
+Repository File Overview
+If your project already integrates ImGui, simply download the Sfaui source bundle and CMake config — you do not need the modified ImGui folder provided here. Link against the compiled Sfaui library to finish integration.
+For DX11 or OpenGL ES rendering demo implementations, navigate to the example folder for corresponding startup samples.
+For Android projects using SDL + OpenGL ES rendering where ImGui fails to render content correctly, replace your backend files with imgui_impl_opengl.h / .cpp from the included ImGui folder.
 
