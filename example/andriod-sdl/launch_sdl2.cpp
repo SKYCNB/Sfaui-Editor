@@ -1,4 +1,4 @@
-//专门为安卓平台搞的一个Sfaui editor使用实例
+//专门为安卓平台搞的一个Sfaui editor使用实例。
 //A Sfaui editor usage instance specifically designed for the Android platform
 #include <stdio.h>
 #include <unistd.h>
