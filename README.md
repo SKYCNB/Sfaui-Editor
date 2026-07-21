@@ -1,12 +1,16 @@
 # Sfaui-Editor
-Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 
 
-Sfaui-Editor
- 
-一款基于 ImGui 开发、适配 Windows / Android 双平台的可视化UI编辑器，专为C++跨平台渲染项目打造。
- 
 项目简介
  
+Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui 开发、适配 Windows / Android 双平台的可视化UI编辑器。
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/你的ID/图片名称.jpg" width="850" alt="Sfaui编辑器演示">
+</p>
+ 
+
+ 
+
 Sfaui Editor 是自研可视化拖拽UI编辑器，无需手写大量ImGui绘制代码，通过拖拽控件、实时调整参数快速生成界面数据；内置撤销/重做系统、图层管理、二进制存档读写，原生支持DX11桌面端、OpenGL ES移动端渲染。
  
 核心特性
