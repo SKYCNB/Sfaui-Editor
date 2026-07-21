@@ -38,7 +38,21 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 ```
 ```cpp
 //draw
+    case AddRect:
+                draw->AddRect(
+                    any_cast<ImVec2>(arr[PARAMST]),
+                    any_cast<ImVec2>(arr[PARAMST + 1]),
+                    any_cast<ImU32>(arr[PARAMST + 2]),
+                    any_cast<float>(arr[PARAMST + 3]),
+                    any_cast<ImDrawFlags>(arr[PARAMST + 4]),
+                    any_cast<float>(arr[PARAMST + 5]));
+                break;
 ```
+
+用any把参数类型抹除，就能添加进函数里，any也能检测类型，回调给编辑器的参数修改，大大减少代码量。
+
+<span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会造成闪退，崩溃等问题</span>
+
 内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、等，有多选，插入，删除等操作。
 
 环境依赖
