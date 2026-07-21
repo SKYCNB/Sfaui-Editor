@@ -56,7 +56,9 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 <img src="https://github.com/user-attachments/assets/016ce36f-ebe0-4e87-9fd0-30a13c0b27f1" width="850" alt="Sfaui编辑器演示2">
 </p>
 
-<span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会“基因突变”，（造成闪退，崩溃等问题），如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉</span>
+<span style="color:red;">缺点：1.由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会“基因突变”，（造成闪退，崩溃等问题）
+                               2.编辑器生成的布局规则和imgui的布局规则是一样的，如果在编辑器中搞一个错误的布局顺序会导致imgui弹出错误提示，比如BeginMainMenuBar里创建BeginMainMenuBar等不规范排版，在安卓上有些编辑器没有debug更是直接闪退，所以开发者也许要时刻记得保存项目避免突然闪退和崩溃带来的损失
+如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉</span>
 
 # 环境依赖和使用
 
