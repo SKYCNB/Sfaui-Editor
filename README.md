@@ -2,7 +2,7 @@
 
 项目简介
  
-Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui 开发、适配 Windows / Android 双平台的轻量可视化UI编辑器。是一个c++11的可嵌入项目，无需手写大量ImGui绘制代码，通过实时调整参数快速生成界面数据 ，能为imgui的ui项目快速打草稿，生成代码，也是为开发imgui的Ui项目的新手快速接触imgui的函数和功能，排版等，专门辅助使用手机编辑器的开发者在imgui的ui项目上编辑困难的短板
+Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui 开发、适配 Windows / Android 双平台的轻量可视化UI编辑器。是一个c++11的可嵌入项目，无需手写大量ImGui绘制代码，通过实时调整参数快速生成界面数据 ，能为imgui的ui项目快速打草稿，生成代码，也是为开发imgui的Ui项目的新手快速接触imgui的函数和功能，排版等，专门辅助使用手机编辑器的开发者在imgui的ui项目上编辑困难的短板。
 
 
 
@@ -11,20 +11,11 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 </p>
  
 
-核心特性
- 
-1. 可视化拖拽画布
-内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、分组、四边形贴图等，拖拽即可创建实例，支持网格吸附、图层显隐、多选操作。
-2. 完整历史操作栈
-商业级Undo/Redo撤回前进，新增、修改、删除、移动控件全部记录；新操作自动清空重做栈，完全符合编辑器逻辑。
-3. 二进制轻量化存档
-自定义二进制 .Sfaui.cofing 工程文件，存储所有控件坐标、UV、颜色、图层序号；读写速度快，体积远小于JSON，适配移动端低性能设备。
-4. 跨平台兼容
-- Windows：DX11渲染后端，VS2022编译
-- Android：GLES2.0/3.0，NDK交叉编译
-5. 控件参数统一解析架构
-使用 std::any 泛型容器存储各类参数（ImVec2、ImVec4、纹理ID、数值），统一switch渲染分发，可快速拓展自定义新控件。
- 
+特性和原理
+编辑器获取和修改imgui的每个函数的参数数据来自动生成imgui的函数效果。
+本编辑器是按照imgui排版流水的规律，以及它统一的函数名称开发而来。由于Imgui的函数参数数量和类型不统一,所以编辑器按照生物的 mRNA , tRNA 之间的翻译操作的灵感，使用c++的any库，解决了参数不统一的问题，
+内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、等，有多选，插入，删除等操作。
+
 环境依赖
  
 - C++17
