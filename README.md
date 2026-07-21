@@ -50,7 +50,7 @@ any erases concrete parameter types to enable unified storage for all function a
 <p align="center"> <img src="https://github.com/user-attachments/assets/016ce36f-ebe0-4e87-9fd0-30a13c0b27f1" width="850" alt="Sfaui Editor Demo 2"> </p>
 
 # Limitations
-1.Due to the inherent characteristics of any, pointer-type parameters cannot be safely validated. Mismatched value types during parameter editing cause "gene mutation" errors, resulting in crashes and runtime failures.
+1.Due to the inherent characteristics of any, maybe pointer-type parameters cannot be safely validated. Mismatched value types during parameter editing cause "gene mutation" errors, resulting in crashes and runtime failures.
 
 2.The editor enforces the exact same layout stack rules as raw ImGui. Invalid nesting (e.g., nesting BeginMainMenuBar inside another BeginMainMenuBar) will trigger ImGui debug warnings; on Android builds without debug tools, such malformed layouts lead to immediate crashes. Developers are advised to save project files frequently to avoid data loss from unexpected failures.
 
@@ -93,5 +93,5 @@ int main()
 # Repository File Overview
 If your project already integrates ImGui, simply download the Sfaui source bundle and CMake config — you do not need the modified ImGui folder provided here. Link against the compiled Sfaui library to finish integration.
 For DX11 or OpenGL ES rendering demo implementations, navigate to the example folder for corresponding startup samples.
-For Android projects using SDL + OpenGL ES rendering where ImGui fails to render content correctly, replace your backend files with imgui_impl_opengl.h / .cpp from the included ImGui folder.
+For Android projects using SDL + OpenGL ES rendering where ImGui fails to render content correctly, replace your backend files with imgui_impl_opengl.h / .cpp from the Sfaui folder included ImGui folder.
 
