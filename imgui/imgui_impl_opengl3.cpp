@@ -305,7 +305,7 @@ bool ImGui_ImplOpenGL3_InitLoader()
 #endif
     return true;
 }
-
+//d
 static void ImGui_ImplOpenGL3_ShutdownLoader()
 {
 #ifdef IMGUI_IMPL_OPENGL_LOADER_IMGL3W
