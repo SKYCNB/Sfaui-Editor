@@ -1,0 +1,10 @@
+
+*.c linguist-language=C
+*.h linguist-language=C++
+*.cpp linguist-language=C++
+*.hpp linguist-language=C++
+
+assets/** linguist-vendored=true
+docs/** linguist-documentation=true
+thirdparty/** linguist-vendored=true
+CMakeLists.txt linguist-language=CMake
