@@ -2,7 +2,8 @@
 
 # 项目简介
  
-Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui 开发、适配 Windows / Android 双平台的轻量可视化UI编辑器。是一个c++11的可嵌入项目，无需手写大量ImGui绘制代码，通过实时调整参数快速生成界面数据 ，能为imgui的ui项目快速打草稿，生成代码，也是为开发imgui的Ui项目的新手快速接触imgui的函数和功能，排版等，专门辅助使用手机编辑器的开发者在imgui的ui项目上编辑困难的短板。
+Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui 开发、适配 Windows / Android 双平台的轻量可视化UI编辑器。是一个c++11的可嵌入项目，无需手写大量ImGui绘制代码，通过实时调整参数快速生成界面数据 ，内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、等，有多选，插入，删除等操作。
+能为imgui的ui项目快速打草稿，生成代码，也是为开发imgui的Ui项目的新手快速接触imgui的函数和功能，排版等，专门辅助使用手机编辑器的开发者在imgui的ui项目上编辑困难的短板。
 
 
 
@@ -51,19 +52,12 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 
 用any把参数类型抹除，就能添加进函数里，any也能检测类型，回调给编辑器的参数修改，大大减少代码量。
 
-<span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会造成闪退，崩溃等问题</span>
+<span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会“基因突变”，（造成闪退，崩溃等问题），如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉</span>
 
-内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、等，有多选，插入，删除等操作。
+# 环境依赖和使用
 
-环境依赖
- 
-- C++17
-- ImGui 1.92.6
-- SDL3 / SDL2
-- nonstd::any
-- CMake 3.16+ / MSBuild
- 
-快速使用
+- C++11
+编辑器是可嵌入项目，凡是能运行imgui的地方，都可以使用Sfaui-ed，编辑器只公开了三个函数接口，开发者只需调用
  
 1. 克隆仓库
  
