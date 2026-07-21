@@ -2,7 +2,7 @@
 # Project Introduction
 Sfaui-Editor, short for SkyC for Android ImGui Editor, is a lightweight visual UI editor built on Dear ImGui that supports both Windows and Android platforms. It is an embeddable C++11 library. Developers no longer need to write massive ImGui rendering code manually; they can rapidly generate UI data by tweaking parameters in real time.
 
-It comes with a full suite of native ImGui widgets including rectangles, images, text, buttons, child panels, and supports common operations such as multi-selection, insertion and deletion.
+It comes with  suite of native ImGui widgets including rectangles, images, text, buttons, child panels, and supports common operations such as multi-selection, insertion and deletion.
 This tool serves multiple purposes: rapidly drafting ImGui interfaces and exporting corresponding code, lowering the learning curve for ImGui beginners to grasp ImGui functions, features and layout rules, and resolving the pain point of inconvenient UI editing for developers building ImGui-based mobile applications.
 
 <p align="center"> <img src="https://github.com/user-attachments/assets/fcdb03a1-a936-458b-8f4b-b6ac1a8f0562" width="850" alt="Sfaui Editor Demo"> </p>
