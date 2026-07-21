@@ -15,36 +15,29 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 编辑器获取和修改imgui的每个函数的参数数据来自动生成imgui的函数效果。
 本编辑器是按照imgui排版流水的规律，以及它统一的函数名称开发而来。由于Imgui的函数参数数量和类型不统一,所以编辑器按照生物的 mRNA , tRNA 之间的翻译操作的灵感，使用c++的any库，解决了参数不统一的问题
 ```cpp
-// 极简Sfaui嵌入演示代码
-#include "Sfaui.h"
-
-int main()
-{
-    bool showBox = true;
-    // 初始化跨平台渲染
-    Sfaui::InitWindow(1280,720,"Sfaui Editor Demo");
-
-    while (!Sfaui::WindowClose())
-    {
-        Sfaui::BeginFrame();
-
-        // 内置可视化UI编辑面板
-        Sfaui::ShowEditorPanel();
-
-        // 预览自定义渐变控件
-        if(ImGui::GradientButton("开启"))
+// data
+   {
+        "AddRect 空心矩形",
         {
-            // 点击逻辑
+            any(LLayout::AddRect),
+            any(std::string("AddRect 空心矩形")),
+            any(ImVec2(40,40)),
+            any(ImVec2(40,40)),
+            any(std::string("AddRect")),
+            any((int)6),
+            any(std::string("ImGui::GetWindowDrawList()->AddRect")),
+            any(ImVec2(0,0)),
+            any(ImVec2(100,100)),
+            any((ImU32)IM_COL32(10,200,25,255)),
+            any((float)10.0f),
+            any((ImDrawFlags)ImDrawFlags_None),
+            any((float)1.0f)
         }
-        ImGui::CustomToggle("方框", &showBox);
-        ImGui::GradientCircle(400,0.4f);
+    },
 
-        Sfaui::EndFrame();
-    }
-
-    Sfaui::Shutdown();
-    return 0;
-}
+```
+```cpp
+//draw
 ```
 内置多种ImGui原生控件：矩形图片、文本、按钮、子面板、等，有多选，插入，删除等操作。
 
