@@ -57,8 +57,34 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 # 环境依赖和使用
 
 - C++11
-编辑器是可嵌入项目，凡是能运行imgui的地方，都可以使用Sfaui-ed，编辑器只公开了三个函数接口，开发者只需调用
- 
+编辑器是可嵌入项目，凡是能运行imgui的地方，都可以使用Sfaui-ed，编辑器只公开了三个函数接口，开发者只需调用Sfaui.h,和三个函数即可
+ ```cpp
+...
+#include "Sfaui.h"
+
+int main()
+...
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+    TexLoader_SetDXDevice(g_pd3dDevice, g_pd3dDeviceContext);
+
+    Sfaui_init("./Sfaui.sam");// Bhind imgui init
+...
+     whlie(1){
+       ...
+       Sfaui_editing();
+
+       ImGui::Render();
+       }
+...
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+    
+    Sfaui_shutdown();
+...
+    }
+ ```
 1. 克隆仓库
  
 bash
