@@ -1,4 +1,4 @@
-﻿//version beta v0.94
+﻿//version v1.0
 //for dear imgui 1.92.6
 #ifndef SFAUI_H
 #define SFAUI_H
@@ -155,7 +155,7 @@
 #include "Sfaui_image/menu_white.h"
 
 //简单使用 : 
-//在Sfaui_editor文件夹中， "launch.cpp"  是Sfaui editor专门为安卓平台搞的一个启动实例，为了大大还原在安卓应用上
+//在example文件夹中， "launch.cpp"  是Sfaui editor专门为安卓平台搞的一个启动实例，为了大大还原在安卓应用上
 //的体验手感，渲染方式为(SDL2+OpenGL)，可以直接在launch.cpp一键运行项目来体验编辑器
 
 //虽然说起来是 "SkyC for andriod imgui" 但是开发者可以也可以在PC端上运行编辑器开发者想在自己的项目开发中使用Sfaui editor，

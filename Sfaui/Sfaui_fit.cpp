@@ -2659,7 +2659,7 @@ int DrawNewUi()
                 }
                 else
                 {
-                    // 修正AddRect参数顺序：圆角=2, flags=0, 线宽=2
+                 
                     draw->AddRect(p0, p1, IM_COL32(0, 0, 0, 255), 2.f, 0, 2.f);
                     draw->AddRectFilled(p0, p1, IM_COL32(30, 30, 30, 200), 2.f);
                     ImVec2 textSize = ImGui::CalcTextSize("Image");
@@ -2685,14 +2685,13 @@ int DrawNewUi()
 
                 if ((uint64_t)texId != 0)
                 {
-                    // 补齐最后一个tint颜色参数，匹配完整原型
-                   // draw->AddImageQuad(texId, p1, p2, p3, p4, uv1, uv2, uv3, tint);
+                  
                 }
                 else
                 {
                     ImVec2 quadPts[4] = { p1, p2, p3, p4 };
                     draw->AddConvexPolyFilled(quadPts, 4, IM_COL32(30, 30, 30, 200));
-                    // 移除多余flags参数，兼容旧版ImGui
+                  
                     draw->AddPolyline(quadPts, 4, IM_COL32(0, 0, 0, 255), true, 2.f);
 
                     ImVec2 center = ImVec2(
@@ -2723,7 +2722,7 @@ int DrawNewUi()
                 else
                 {
                     draw->AddRectFilled(p0, p1, IM_COL32(30, 30, 30, 200), rounding);
-                    // 圆角矩形边框，flags填0，线宽2
+                    
                     draw->AddRect(p0, p1, IM_COL32(0, 0, 0, 255), rounding, 0, 2.f);
                     ImVec2 textSize = ImGui::CalcTextSize("ImageRounded");
                     ImVec2 textPos = ImVec2(

@@ -16,7 +16,7 @@
 
 
 //存放全局变量的文件 File for storing global variables
-#define SFAUIED_VESION 0.94
+#define SFAUIED_VESION 1.0
 
 #define VLENUM  0
 #define PAIR  1
@@ -131,8 +131,8 @@ class SfauiSettingConfig
 {
 public:
     // 基础设置
-    bool UseScreen_SetImvec2 = false;
-    bool showLogWindow = true;
+    bool UseScreen_SetImvec2 = true;
+    bool showLogWindow = false;
     bool showGrid = false;
     bool snapGrid = false;
     float gridSize = 10.0f;
