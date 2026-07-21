@@ -85,25 +85,11 @@ int main()
 ...
     }
  ```
-1. 克隆仓库
- 
-bash
-  
-git clone https://github.com/SKYCNB/Sfaui-Editor.git
- 
- 
-2. Windows编译：使用VS2022打开CMake工程，直接构建运行
-3. Android编译：使用TinaIDE导入NDK项目，打包APK
-4. 编辑器操作：拖拽左侧控件至画布，调整参数后保存二进制工程文件，在游戏/渲染引擎中加载渲染
- 
-文件说明
- 
--  All_mRNA ：所有画布控件实例数据容器
--  LVBuild ：图层层级数组
--  WasChose ：控件选中状态标记
--  Visibility ：控件显隐控制
--  Sfaui_fit.h ：控件适配、绘制分发核心逻辑
-- 二进制读写： SaveSet  / 加载解析函数
+
+# 仓库文件说明
+如果开发者们的项目中能运行imgui，直接下载Sfaui文件整合包即可，不需要下载这里的imgui文件，最后链接Sfaui库即可，如需要dx11或opengles渲染方式使用Sfaui的实例，请进入 example 文件夹寻找对应实例
+
+如果开发者在安卓平台上使用Sdl - opengles 的渲染方式，且imgui不能显示画面，可以找到这里imgui文件夹里的
  
 开发规划
  
