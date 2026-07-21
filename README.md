@@ -14,13 +14,13 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 特性和原理
 编辑器获取和修改imgui的每个函数的参数数据来自动生成imgui的函数效果。
 本编辑器是按照imgui排版流水的规律，以及它统一的函数名称开发而来。由于Imgui的函数参数数量和类型不统一,所以编辑器按照生物的 mRNA , tRNA 之间的翻译操作的灵感，使用c++的any库，解决了参数不统一的问题
-
 ```cpp
 // 极简Sfaui嵌入演示代码
 #include "Sfaui.h"
 
 int main()
 {
+    bool showBox = true;
     // 初始化跨平台渲染
     Sfaui::InitWindow(1280,720,"Sfaui Editor Demo");
 
