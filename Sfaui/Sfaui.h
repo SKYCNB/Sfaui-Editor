@@ -1,4 +1,12 @@
-﻿//version v1.0
+﻿/*
+Sfaui-Editor Cross-platform ImGui UI Editor
+Copyright (c) 2026 SKYCNB
+MIT License
+See LICENSE file for full license information.
+*/
+
+
+//version v1.0
 //for dear imgui 1.92.6
 #ifndef SFAUI_H
 #define SFAUI_H
@@ -11,12 +19,12 @@
 //SkyC for Android ImGui -  Sfaui
 //2026 by-skyc
 
+//Sfaui Source Repository : https://github.com/SKYCNB/Sfaui-Editor.git
 
 // Sfaui 编辑器基于 Dear ImGui 开源库开发
 // This editor is built entirely on the open-source Dear ImGui library,
 // ImGui 官方相关链接 Official Links:
 // 项目源码仓库 Source Repository: https://github.com/ocornut/imgui
-// 官方主页 Official Website: https://www.dearimgui.com/
 
 //
 //项目特性:由于sfaui追求快速见效的效果，用生物的转录和翻译来对其模拟，实现imgui函数的差异抹平
@@ -155,8 +163,8 @@
 #include "Sfaui_image/menu_white.h"
 
 //简单使用 : 
-//在example文件夹中， "launch.cpp"  是Sfaui editor专门为安卓平台搞的一个启动实例，为了大大还原在安卓应用上
-//的体验手感，渲染方式为(SDL2+OpenGL)，可以直接在launch.cpp一键运行项目来体验编辑器
+//在example文件夹中， "launch_sdl2/3.cpp"  是Sfaui editor专门为安卓平台搞的一个启动实例，为了大大还原在安卓应用上
+//的体验手感，渲染方式为(SDL2/3+OpenGL)，可以直接在launch.cpp一键运行项目来体验编辑器
 
 //虽然说起来是 "SkyC for andriod imgui" 但是开发者可以也可以在PC端上运行编辑器开发者想在自己的项目开发中使用Sfaui editor，
 //仅仅使用下面的三个函数就可以把Sfaui editor带入到开发项目中，
@@ -173,6 +181,30 @@
 //改造过的imgui，直接跟imgui官方更新就行
 //还有PC平台，也是完全不用下载sfaui eidotr改造过的imgui文件，下载sfaui ediotr必要的文件和使用即可
 
+
+// Basic Usage:
+// Inside the example folder, "launch_sdl2/3.cpp" is a startup sample exclusively built for Android by the Sfaui Editor. It closely replicates the touch and operation experience of native Android applications,
+// with a rendering backend of (SDL2/3 + OpenGL). You can run the project directly via launch.cpp to test the editor.
+
+// Though named "SkyC for Android ImGui", developers are also able to launch the editor on PC.
+// If you want to integrate the Sfaui Editor into your own project, you only need the three functions listed below:
+// First, call Sfaui_init() after ImGui initialization and before entering the main loop. Its parameter specifies the storage path for project files and is optional; leaving it blank will create a new project by default.
+// Next, insert Sfaui_editing() inside the main loop to render the editor interface. Due to varying device resolutions, the editor UI may appear cramped on certain devices.
+// Finally, add Sfaui_shutdown() after exiting the main loop to clean up resources alongside ImGui.
+
+// Important Notes!
+// The Sfaui_editor folder contains a separate set of ImGui source files. One line of code has been added to imgui_impl_opengl3.cpp within these files for Android compatibility.
+// If you intend to run the project on Android using the SDL2 + OpenGL ES 2.0 rendering pipeline, this modified imgui_impl_opengl3.cpp is mandatory.
+// The downside is you will have to stop auto-updating this single file from official ImGui releases.
+// All other ImGui files can still be updated normally from the official source.
+
+// That said, imgui_impl_opengl3.cpp can still be synced with official ImGui updates. The only modification made is adding the line: #define IMGUI_IMPL_OPENGL_ES2 1
+// After overwriting this file with the latest official version, simply add that define at the very top of imgui_impl_opengl3.cpp to match the Sfaui Editor's modification.
+
+// Additional case 1: If your Android project does not use SDL2 + OpenGL ES 2.0, and instead relies on the official Android ImGui backend with
+// #include "imgui_impl_android.h" and #include "imgui_impl_opengl3.h", you do NOT need the modified ImGui bundle provided by Sfaui Editor — you may use vanilla official ImGui entirely.
+
+// Additional case 2: PC builds require none of Sfaui Editor's modified ImGui files. Simply import and use the core Sfaui Editor modules as normal.
 
 bool Sfaui_init(std::string file ="");    
 bool Sfaui_editing();
