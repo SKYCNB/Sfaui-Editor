@@ -56,7 +56,7 @@ any erases concrete parameter types to enable unified storage for all function a
 
 3.The editor only supports static layout generation. It cannot handle widgets that require conditional if branches to render correctly (e.g., ImGui::MenuItem("XXX")). It is not recommended for large monolithic UIs; split your interface into smaller modular blocks and integrate the exported code snippets separately into your project.
 
-4.While most basic data types are supported, pointer parameters are not fully handled. Exported code is pseudocode that requires manual revision or AI-assisted adjustments to become fully executable.
+4.While most basic data types are supported, some parameters are not fully handled. Exported code is pseudocode that requires manual revision or AI-assisted adjustments to become fully executable.
 
 If embedding this editor causes crashes or disrupts your project workflow, please remove all Sfaui-related source files immediately. The author apologizes for any inconvenience this may cause.
 # Environment Dependencies & Integration Guide
