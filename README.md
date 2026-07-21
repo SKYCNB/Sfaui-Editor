@@ -54,6 +54,10 @@ Sfaui-Editor 全称为 SkyC for andriod ImGui editor , 一款基于 Dear ImGui �
 
 <span style="color:red;">缺点：由于any的特性，不能检测指针类型，和如果返回类型与函数对应的类型不匹配，会“基因突变”，（造成闪退，崩溃等问题），如果开发者在内嵌编辑器后闪退或程序崩溃，影响和危害个人项目，请尽快把编辑器相关的东西删去，这里编辑器作者为各位开发者感到非常的抱歉</span>
 
+<p align="center">
+<img src="" width="850" alt="Sfaui编辑器演示">
+</p>
+
 # 环境依赖和使用
 
 - C++11
