@@ -1,0 +1,20 @@
+# VS编译缓存
+.vs/
+x64/
+Debug/
+Release/
+*.obj
+*.pdb
+*.exe
+*.ilk
+*.log
+
+# CMake构建目录
+build/
+cmake-build-*
+CMakeCache.txt
+CMakeFiles/
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
