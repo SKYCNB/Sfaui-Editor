@@ -16,7 +16,7 @@
 
 
 //存放全局变量的文件 File for storing global variables
-#define SFAUIED_VESION 1.0
+#define SFAUIED_VESION 1.1
 
 #define VLENUM  0
 #define PAIR  1
@@ -175,7 +175,7 @@ public:
 
     //大小
     //size
-    ImVec2 IMAGESIZE = ImVec2(20, 20);
+    ImVec2 IMAGESIZE = ImVec2(40, 40);
     bool buttoniffollowfont = true;
     ImVec2 ButtonSIZE = ImVec2(-1, 70);
 
@@ -235,7 +235,7 @@ public:
         col_HeaderActive    = ImVec4(0.28f, 0.32f, 0.42f, 1.00f);
         col_Text            = ImVec4(0.92f, 0.92f, 0.92f, 1.00f);
 
-        IMAGESIZE = ImVec2(20, 20);
+        IMAGESIZE = ImVec2(40, 40);
         buttoniffollowfont = true;
         ButtonSIZE = ImVec2(-1, 70);
 

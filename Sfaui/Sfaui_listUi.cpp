@@ -549,8 +549,11 @@ void LVlist()
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1,1,1,floatBall_Alpha));
             ImGui::Text("OnClik \"( + Add )\" come to creat your ui");
-            ImGui::Text("Sfaui editor version : beta %0.2f",SFAUIED_VESION);
+            ImGui::Text("Sfaui editor version : %0.2f",SFAUIED_VESION);
             ImGui::Text("by Skyc 天C");
+            ImGui::Text("本编辑器只支持比较小的控件布局设计，不支持多次导入");
+            ImGui::Text("记得需时刻保存，防止编辑器的意外闪退导致布局数据消失");
+            ImGui::Text("建议边编辑布局边导出代码和把代码运用于项目中");
             ImGui::PopStyleColor();
         }
 
@@ -602,7 +605,7 @@ void LVlist()
                             ListUi_NowEnd+=base.mRNA.size();
                             DeleteUi(ListUi_NowStart,ListUi_NowEnd);
 
-                            CloseDragInsertMode(); // 插入完成统一关闭
+                            CloseDragInsertMode(); 
                             //Make_undo();
                         }
                         ImGui::PopStyleColor();
@@ -1225,7 +1228,7 @@ void log(std::string s) {
         ImGui::Text("%d:%s", LVBuild[i], any_cast<std::string>(id).c_str());
     }
 
-    // 新增：完整打印 All_mRNA 每一条的 20 个元素
+    
     ImGui::Separator();
     ImGui::Text("===== All_mRNA Full Data =====");
     for (int i = 0; i < All_mRNA.size(); ++i)

@@ -78,6 +78,8 @@ See LICENSE file for full license information.
 //v1.0 完善了开发者在使用编辑器的各种情况，正式发布Sfaui editor v1.0
 //2026-7-20
 
+//v1.1 修复了一些文件问题
+// 2026-9-18
 // SkyC for Android ImGui - Sfaui
 // 2026 Developed by skyc
 

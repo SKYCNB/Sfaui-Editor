@@ -280,6 +280,7 @@ static bool LoadSet() {
 
 SfauiSettingConfig& cfgi = g_SettingConfig;
 mRNAHistoryManager& histman = g_HistoryMgr;
+static bool hadloadproject = false;
 //放在imgui init 后，放在while前
 bool Sfaui_init(std::string file) {
 
@@ -311,11 +312,12 @@ bool Sfaui_init(std::string file) {
 
     if (Sfaui_loadProject(file.c_str())) {
         strncpy(Sfaui_SavePathBuf, file.c_str(), 511);
-        Sfaui_SavePathBuf[511] = '\0'; 
+        Sfaui_SavePathBuf[511] = '\0';
+        hadloadproject = true;
     }
     else
         Sfaui_log("load project fail, had created a new project");
-  
+
 
     if(!cfgi.buttoniffollowfont) ButtonSIZE = ImVec2(cfgi.ButtonSIZE.x, cfgi.ButtonSIZE.x);
     else  ButtonSIZE = ImVec2(-1, 0);
@@ -328,8 +330,55 @@ bool Sfaui_init(std::string file) {
 }
 
 //放在循环里面，用于显示编辑器
+
+bool showImportProjectPopup = true;
+char projectPathBuffer[512] = "";
+
 bool Sfaui_editing() {
     adjust_scren();
+
+    if (showImportProjectPopup && !hadloadproject ) {
+        ImGui::OpenPopup("import_project_popup");
+    }
+
+    // 弹窗主体
+    if (ImGui::BeginPopupModal("import_project_popup", &showImportProjectPopup, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("是否导入项目");
+        ImGui::Separator();
+
+        ImGui::Text("项目路径：");
+        ImGui::InputText("##project_path", projectPathBuffer, IM_ARRAYSIZE(projectPathBuffer));
+
+        ImGui::Spacing();
+
+        // 取消按钮
+        if (ImGui::Button("取消", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+            showImportProjectPopup = false;
+        }
+        ImGui::SameLine();
+     
+        if (ImGui::Button("确定", ImVec2(120, 0)))
+        {
+            
+            const char* path = projectPathBuffer;
+
+            if (Sfaui_loadProject(path)) {
+                Sfaui_log("");
+            }
+            else
+                Sfaui_log("load project fail, had created a new project");
+
+
+            showImportProjectPopup = false;
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+
 
     bool useCustomStyle = !g_SettingConfig.followProjectStyle;
    
