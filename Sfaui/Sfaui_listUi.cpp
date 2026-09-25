@@ -1,4 +1,5 @@
 #include "Sfaui_listUi.h"
+#include "Sfaui_fit.h"
 using namespace nonstd;
 
 static enum SfauiLaout
@@ -35,14 +36,18 @@ static int OPCLUI=0; //for open or close Ui laout
 static int ONLOCK=0;
 static ImGuiWindowFlags LOCKLISTUI = ImGuiWindowFlags_NoTitleBar;
 static bool NewFrame_OnClik_back_Button = false;
-//动画
+
 SfauiSettingConfig& cfg = g_SettingConfig;
 
+
+
+
+
+//动画
 static float floatBall_OffsetX = 0.0f;
 static float floatBall_Alpha = 0.0f;
 static const float floatBall_AnimSpeed = 4.5f;
 static const float floatBall_MaxOffRatio = 0.35f;
-
 static void UpdateFloatBallAnim()
 {
 
@@ -56,13 +61,107 @@ static void UpdateFloatBallAnim()
 }
 
 
-//模拟生物的翻译(finish)
-int translate(std::vector<any> to)
-{
-    if(to.size() > 20) {
-        Sfaui_log("translate error:any size=%d over range",to.size());
-        return 0;
+
+
+
+
+//寻找对应楼层的初末位置
+ImVec2 FindFlood(int start, int end, int floodf) {
+    ImVec2 pair = { -1,-1 };
+    if (start > end || start<0 || end>LVBuild.size())
+    {
+        Sfaui_log("FindFlood error: start :%d, end :%d,LVBuild.size() :%d\n", start, end, LVBuild.size());
+        pair.x = 0;
+        pair.y = LVBuild.size();
+        return pair;
     }
+    for (int i = start; i < end; i++) {
+        if (LVBuild[i] == floodf)
+        {
+            if (pair.x == -1)
+            {
+                pair = { (float)i,-1 };
+                continue;
+            }
+            if (pair.x != -1)
+            {
+                pair.y = (float)i;
+                break;
+            }
+        }
+    }
+    if (pair.x == -1 || pair.y == -1)
+    {
+        Sfaui_log("FindFlood error: start :%d, end :%d,LVBuild.size() :%d\n", start, end, LVBuild.size());
+        pair.x = 0;
+        pair.y = LVBuild.size();
+    }
+
+    return pair;
+}
+
+
+//作用于在更高层的控件做一个·统一选中或取消
+void MakeNextFloodWasChoseTogether(int st,int en) {
+    int for_delete_endlaout1 = 0;
+    int for_delete_endlaout2 = 0;
+    for (int i = ListUi_NowStart; i < ListUi_NowEnd; i++) {
+
+        if (WasChose[i] == 0 && LVBuild[i] == flood + 1) {
+            for_delete_endlaout1++;
+            if (for_delete_endlaout1 % 2 != 0) {
+                int nextflooden = (int)FindFlood(i, LVBuild.size(), flood + 1).y;
+                OffWhiteLV_OnListUi(i, nextflooden);
+            }
+        }
+        if (WasChose[i] == 1)
+        {
+            if (LVBuild[i] == flood + 1) {
+                for_delete_endlaout2++;
+                if (for_delete_endlaout2 % 2 != 0) {
+                    int nextflooden = (int)FindFlood(i, LVBuild.size(), flood + 1).y;
+                    AllWhiteLV_OnListUi(i, nextflooden);
+                }
+            }
+
+        }
+    }
+}
+
+
+
+
+//单单检测该楼层是否有控件被选中
+bool CheckWasChose_OnAFlood_OnListUi(int st, int en) {
+
+    bool sure_NOT_choose_in_the_flood = false;
+    int keepfindflood = -1;
+    for (int findchoose_in_the_flood = ListUi_NowStart; findchoose_in_the_flood < ListUi_NowEnd; findchoose_in_the_flood++)
+    {
+        if (keepfindflood >= findchoose_in_the_flood) continue;
+        if (LVBuild[findchoose_in_the_flood] == flood + 1) {
+            keepfindflood = (int)FindFlood(findchoose_in_the_flood, LVBuild.size(), flood + 1).y;
+        }
+        if (WasChose[findchoose_in_the_flood] == 1) {
+            sure_NOT_choose_in_the_flood = true;
+            break;
+        }
+    }
+    return sure_NOT_choose_in_the_flood;
+}
+
+
+
+//用于创建控件
+//模拟生物的翻译(填进绘制链)
+bool translateLV_OnListUi(std::vector<any> to)
+{
+    if(to.size() > SFAUI_PREMITE_PARAMETER_MAX_NUM) {
+        Sfaui_log("translate error:any size=%d over range",to.size());
+        return false;
+    }
+    
+    //获取参数数量
 
     int t=0;
     if(to[PARAMNUM].has_value() && to[PARAMNUM].type() == typeid(int))
@@ -70,17 +169,17 @@ int translate(std::vector<any> to)
     else
     {
         Sfaui_log("translate error:any[%d] no has value",PARAMNUM);
-        return 0;
+        return false;
     }
-    std::array<any, 20> full{};
+    std::array<any, SFAUI_PREMITE_PARAMETER_MAX_NUM> full{};
     for(int i = 0; i < to.size(); i++)
     {
-        if(i<=6 + t)
+        if(i < SFAUI_PARAMETER_BEGIN_POSTION+ t)
         {
             if(!to[i].has_value())
             {
                 Sfaui_log("translate error:any[%d] no has value",i);
-                return 0;
+                return false;
             }
         }
         full[i] = to[i];
@@ -94,10 +193,12 @@ int translate(std::vector<any> to)
             full[FUNCTIONNMAE].type() != typeid(std::string))
     {
         Sfaui_log("translate error:fixed sequence of tRNA is error");
-        return 0;
+        return false;
     }
+    
+     //防止imgui-id重复
 
-    if (full[REALID].has_value() && full[REALID].type() == typeid(std::string)) //防止id重复
+    if (full[REALID].has_value() && full[REALID].type() == typeid(std::string))
     {
         std::string s = any_cast<std::string>(full[REALID]);
         full[REALID] = s + std::to_string(idnum);
@@ -109,20 +210,27 @@ int translate(std::vector<any> to)
         idnum++;
     }
     All_mRNA.insert(All_mRNA.begin()+ListUi_NowEnd,full);
-    return 1;
+    return true;
 }
 
 
-void CreatUi(int type)
+
+
+
+
+
+
+//创建控件Ui
+bool CreateLVUi_OnListUi(int type)
 
 {
    
     //type is laout or view
-    std::vector<CtrlCategory>控件分类;
-    std::map<std::string, std::vector<any>> LVList_tRNA;
+    std::vector<CtrlCategory>ChooseLaoutListType;
+    std::map<std::string, std::vector<any>> ChooseLVList_tRNA;
 
-    控件分类 = PrintLaoutList;
-    LVList_tRNA = LaoutList_tRNA;
+    ChooseLaoutListType = PrintLaoutList;
+    ChooseLVList_tRNA = LaoutList_tRNA;
 
 
     ImGui::Spacing();
@@ -130,7 +238,7 @@ void CreatUi(int type)
         NOW_SFAUILAOUT=ToListUi;
     const float btnHeight = 55.0f;
     for(int i = 0; i < 2; i++) {
-        for (auto& cat : 控件分类)
+        for (auto& cat : ChooseLaoutListType)
         {
             if (ImGui::CollapsingHeader(cat.name.c_str()))
             {
@@ -150,18 +258,22 @@ void CreatUi(int type)
                             Visibility.size() != WasChose.size())
                         {
                             Sfaui_log("creat ui error:\"WasChose\",\"LVBuild\",\"Visibility\" is not correspond");
-                            return;
+                            return false;
                         }
 
                         //点击添加
-                        translate(LVList_tRNA[name]);
-                        std::string pair = any_cast<std::string>(LVList_tRNA[name][PAIR]);
+                        if (!translateLV_OnListUi(ChooseLVList_tRNA[name]))
+                            return false;
+
+                        std::string pair = any_cast<std::string>(ChooseLVList_tRNA[name][PAIR]);
                         ListUi_NowEnd += 1;
+                        
+                        //检测是否是配套控件
 
                         if (pair != name)
                         {
 
-                            translate(LVList_tRNA[pair]);
+                            translateLV_OnListUi(ChooseLVList_tRNA[pair]);
                             ListUi_NowEnd -= 1;
                             //进行分层处理
                             //make pair laout
@@ -194,19 +306,25 @@ void CreatUi(int type)
                 ImGui::Spacing();
             }
         }
-        控件分类 = PrintViewList;
-        LVList_tRNA = ViewList_tRNA;
+        ChooseLaoutListType = PrintViewList;
+        ChooseLVList_tRNA = ViewList_tRNA;
 
     }
-
+    return true;
 
 }
 
 
 
 
-bool DeleteUi(int st,int en)
+//删除操作
+bool DeleteLV_OnListUi(int st,int en)
 {
+
+    if (!CheckWasChose_OnAFlood_OnListUi)
+        return false;
+
+    MakeNextFloodWasChoseTogether(st, en);
     int totalSize = (int)LVBuild.size();
 
     if (st < 0) st = 0;
@@ -254,7 +372,9 @@ bool DeleteUi(int st,int en)
     return true;
 }
 
-bool OffWhiteUi(int st,int en) {
+
+//取消选择
+bool OffWhiteLV_OnListUi(int st,int en) {
     for(int i = st; i < en; i++)
     {
         if(WasChose[i]==1)
@@ -264,7 +384,14 @@ bool OffWhiteUi(int st,int en) {
     }
     return true;
 }
-bool AllWhiteyUi(int st,int en) {
+
+
+
+
+
+
+//全选操作
+bool AllWhiteLV_OnListUi(int st,int en) {
     for(int i = st; i < en; i++)
     {
         if(WasChose[i]==0)
@@ -275,7 +402,13 @@ bool AllWhiteyUi(int st,int en) {
     return true;
 }
 
-bool InveriUi(int st,int en,std::vector<char> &t)
+
+
+
+
+
+//反选操作
+bool InvertLV_OnListUi(int st,int en,std::vector<char> &t)
 {
     for(int i = st; i < en; ++i)
     {
@@ -285,7 +418,11 @@ bool InveriUi(int st,int en,std::vector<char> &t)
 }
 
 
-bool CopyUi(int st,int en) {
+
+
+
+//复制操作
+bool CopyLV_OnListUi(int st,int en) {
     Copy.mRNA.clear();
     Copy.LVBuild.clear();
     Copy.WasChose.clear();
@@ -303,7 +440,14 @@ bool CopyUi(int st,int en) {
 }
 
 
-bool PickUpUi(int en)
+
+
+
+
+
+
+//粘贴操作
+bool PickUpLV_OnListUi(int en)
 {
     if(Copy.mRNA.empty())
         return false;
@@ -365,40 +509,105 @@ bool PickUpUi(int en)
 
     return true;
 }
-/////
-static bool ifcontent_duplicate_white = false;
-//锁定开启插入时的层级区间，防止跨层级乱显示
-static int dragStartCheck = 0;
-static int dragEndCheck = 0;
 
-// 统一关闭插入模式函数
-static void CloseDragInsertMode()
-{
-    ifcontent_duplicate_white = false;
-    dragStartCheck = 0;
-    dragEndCheck = 0;
-}
 
-bool content_duplicate_white(int st) {
-    if(std::find(WasChose.begin()+ListUi_NowStart, WasChose.begin()+ListUi_NowEnd, 1) != WasChose.begin()+ListUi_NowEnd) {
-        ifcontent_duplicate_white = true;
-        // 开启时保存当前层级边界
-        dragStartCheck = ListUi_NowStart;
-        dragEndCheck = ListUi_NowEnd;
-        return true;
+
+
+
+//插入操作
+static bool ifInsertLV = false;
+
+bool InsertLV_OnListUi(int position) {
+    Help_mRNA base;
+
+    //提前把其他楼层的控件给取消了
+
+    MakeNextFloodWasChoseTogether(ListUi_NowStart, ListUi_NowEnd);
+  
+    for (int ifwaschosen = ListUi_NowStart; ifwaschosen < ListUi_NowEnd; ifwaschosen++) {
+  
+        if (WasChose[ifwaschosen] == 1)
+        {
+            base.mRNA.push_back(All_mRNA[ifwaschosen]);
+            base.LVBuild.push_back(LVBuild[ifwaschosen]);
+            base.Visibility.push_back(Visibility[ifwaschosen]);
+            base.WasChose.push_back(0);
+        }
     }
-    return false;
+    for (int i = base.mRNA.size() - 1; i >= 0; i--) {
+        All_mRNA.insert(All_mRNA.begin() + position, base.mRNA[i]);
+        LVBuild.insert(LVBuild.begin() + position, base.LVBuild[i]);
+        Visibility.insert(Visibility.begin() + position, base.Visibility[i]);
+        WasChose.insert(WasChose.begin() + position, base.WasChose[i]);
+        ListUi_NowEnd++;
+    }
+
+    DeleteLV_OnListUi(ListUi_NowStart, ListUi_NowEnd);
+    ifInsertLV = false;
+    //Make_undo();
+    return true;
 }
 
 
 
-void LVlist()
-{
+void VisibilityLV_OnListUi() {
+    for (int i = 0; i < WasChose.size(); i++) {
+        if (WasChose[i] == 1) {
+            InvertLV_OnListUi(i, i + 1, Visibility);
+        }
+    }
+}
 
-    SfauiSettingConfig& cfg = g_SettingConfig;
 
-    if(cfg.enableAnim)
-        UpdateFloatBallAnim();
+//返回上一个楼层
+void BackFlood_OnListUi() {
+    if (NOW_LISTUIONCLICK == On_None)  //关闭UI
+    {
+        OPCLUI++;
+        NOW_SFAUILAOUT = ToNoneUi;
+    }
+    if (NOW_LISTUIONCLICK == On_Laout) //退出到上一楼
+        flood--;
+    if (NOW_LISTUIONCLICK == On_View) //点击该楼层的控件
+        flood = flood;
+
+    //检测楼层情况来刷新界面
+    if (flood > 0)
+    {
+        //回退一楼
+        for (int findst = ListUi_NowPos; findst >= 0; findst--) {
+            if (LVBuild[findst] == flood)
+            {
+                ListUi_NowStart = findst;
+                break;
+            }
+
+            if (LVBuild[findst] != flood && findst <= 0)
+                ListUi_NowStart = -1;
+        }
+
+        //刷新本楼层的范围
+        ListUi_NowEnd = (int)FindFlood(ListUi_NowStart, LVBuild.size(), flood).y;
+        ListUi_NowPos = ListUi_NowStart;
+        ListUi_NowStart = ListUi_NowStart + 1;
+        NOW_LISTUIONCLICK = On_Laout;
+    }
+    else
+    {
+
+        //退至关闭UI
+        flood = 0;
+        ListUi_NowStart = (int)FindFlood(-1, -1, -1).x;  //reinit
+        ListUi_NowEnd = (int)FindFlood(-1, -1, -1).y;
+        ListUi_NowPos = 0;
+        NOW_LISTUIONCLICK = On_None;
+    };
+}
+
+
+
+//值检测
+void SafetyCheck_OnListUi() {
 
     //safety check
     int totalSize = (int)LVBuild.size();
@@ -408,24 +617,41 @@ void LVlist()
     if (ListUi_NowPos < 0) ListUi_NowPos = 0;
     if (totalSize > 0 && ListUi_NowPos >= totalSize)
         ListUi_NowPos = totalSize - 1;
+    
+
+}
+
+
+
+
+
+
+//main ui
+//主UI
+void LVlistUi()
+{
+
+    SfauiSettingConfig& cfg = g_SettingConfig;
+
+    if(cfg.enableAnim)
+        UpdateFloatBallAnim(); //动画
+
+
+    SafetyCheck_OnListUi();
+    int totalSize = (int)LVBuild.size();
+
     if(NOW_LISTUIONCLICK==On_Laout)
     {
-        if(flood>0&&LVBuild[ListUi_NowEnd]!=flood) NewFrame_OnClik_back_Button=true;
+        if(flood>0&&LVBuild[ListUi_NowEnd]!=flood) NewFrame_OnClik_back_Button=true; //检测楼层有异常时重刷新
     }
 
-
-    if (ifcontent_duplicate_white)
-    {
-        if (ListUi_NowStart != dragStartCheck || ListUi_NowEnd != dragEndCheck)
-        {
-            CloseDragInsertMode();
-        }
-    }
 
 
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(cfg.col_WindowBg.x, cfg.col_WindowBg.y, cfg.col_WindowBg.z, floatBall_Alpha));
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(cfg.col_Text.x, cfg.col_Text.y, cfg.col_Text.z, floatBall_Alpha));
     ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.4f,0.4f,0.4f,floatBall_Alpha));
+
+
 
     ImVec2 LVlistUi=ImGui::GetWindowSize();
 
@@ -433,6 +659,8 @@ void LVlist()
     float availableWidth = ImGui::GetContentRegionAvail().x;
     ImGui::SameLine((availableWidth - titleWidth) * 0.5f);
     ImGui::TextUnformatted("Sfaui edit");
+
+
     {
         ImGui::Separator();
         ImGui::Spacing();
@@ -440,106 +668,95 @@ void LVlist()
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, cfg.FrameRounding);
         std::string strnow="dj dj my small dj";
 
-        if(ImGui::Button("Back", ImVec2(-1.0f, ButtonSIZE.y))||NewFrame_OnClik_back_Button)
+
+
+
+        //返回操作
         {
-            CloseDragInsertMode(); // 返回直接关闭
 
-            if(NOW_LISTUIONCLICK==On_None)
+            if (ImGui::Button("Back", ImVec2(-1.0f, ButtonSIZE.y)) || NewFrame_OnClik_back_Button)
             {
-                OPCLUI++;
-                NOW_SFAUILAOUT=ToNoneUi;
+              
+                ifInsertLV = false; //禁止返回后继续插入操作
+                BackFlood_OnListUi();
+                NewFrame_OnClik_back_Button = false;
             }
-            if(NOW_LISTUIONCLICK==On_Laout)
-                flood--;
-            if(NOW_LISTUIONCLICK==On_View)
-                flood=flood;
 
-            if(flood>0)
-            {
-                for(int findst = ListUi_NowPos; findst >= 0; findst--) {
-                    if(LVBuild[findst]==flood)
-                    {
-                        ListUi_NowStart=findst;
-                        break;
-                    }
-                    if(LVBuild[findst]!=flood&&findst<=0)
-                        ListUi_NowStart=-1;
-                }
-                ListUi_NowEnd=(int)FindFlood(ListUi_NowStart,LVBuild.size(),flood).y;
-                ListUi_NowPos=ListUi_NowStart;
-                ListUi_NowStart=ListUi_NowStart+1;
-                NOW_LISTUIONCLICK=On_Laout;
-            }
-            else
-            {
-                flood=0;
-                ListUi_NowStart=(int)FindFlood(-1,-1,-1).x;  //reinit
-                ListUi_NowEnd=(int)FindFlood(-1,-1,-1).y;
-                ListUi_NowPos = 0;
-                NOW_LISTUIONCLICK=On_None;
-            };
-            NewFrame_OnClik_back_Button=false;
         }
 
-        if(NOW_LISTUIONCLICK==On_Laout||NOW_LISTUIONCLICK==On_None) {
-            if(ImGui::Button("+ Add", ImVec2(LVlistUi.x * 0.2f, ButtonSIZE.y)))
-                NOW_SFAUILAOUT=ToCreatUi;
-        }
-        ImGui::SameLine();
 
-        if (ImGui::ImageButton("btn_delete_icon", g_tex_pool["deletey"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
+        //主要功能
         {
+
+
+            //打开创建UI面板
+            if (NOW_LISTUIONCLICK == On_Laout || NOW_LISTUIONCLICK == On_None) {
+                if (ImGui::Button("+ Add", ImVec2(LVlistUi.x * 0.2f, ButtonSIZE.y)))
+                    NOW_SFAUILAOUT = ToCreatUi; 
+            }
+
+            ImGui::SameLine();
+
             //删除
-            g_HistoryMgr.SaveSnapshot();
-            DeleteUi(ListUi_NowStart,ListUi_NowEnd);
-            //Make_undo();
-        }
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("btn_copy_icon", g_tex_pool["copyy"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-            CopyUi(ListUi_NowStart,ListUi_NowEnd);
-
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("btn_inveri_icon", g_tex_pool["inveri"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-            InveriUi(ListUi_NowStart,ListUi_NowEnd,WasChose);
-
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("btn_offwhite_icon", g_tex_pool["offwhite"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-            OffWhiteUi(ListUi_NowStart,ListUi_NowEnd);
-
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("btn_allwhitey_icon", g_tex_pool["allwhitey"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-            AllWhiteyUi(ListUi_NowStart,ListUi_NowEnd);
-
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("btn_puckup_icon", g_tex_pool["puckup"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-        {
-            // 粘贴
-            g_HistoryMgr.SaveSnapshot();
-            PickUpUi(ListUi_NowEnd);
-           // Make_undo();
-        }
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("btn_content_duplicate_white_icon", g_tex_pool["content_duplicate_white"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-            content_duplicate_white(ListUi_NowStart);
-
-        ImGui::SameLine();
-
-        if (ImGui::ImageButton("remove_eye_white_icon", g_tex_pool["remove_eye_white"], IMAGESIZE, ImVec2(0,0), ImVec2(1,1)))
-        {
-            //可见
-            for(int i = 0; i < WasChose.size(); i++) {
-                if(WasChose[i]==1) {
-                    InveriUi(i,i+1,Visibility);
-                }
+            if (ImGui::ImageButton("btn_delete_icon", g_tex_pool["deletey"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+            {        
+                g_HistoryMgr.SaveSnapshot();
+                DeleteLV_OnListUi(ListUi_NowStart, ListUi_NowEnd);
+                //Make_undo();
             }
+
+            ImGui::SameLine();
+
+            //复制
+            if (ImGui::ImageButton("btn_copy_icon", g_tex_pool["copyy"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+                CopyLV_OnListUi(ListUi_NowStart, ListUi_NowEnd);
+
+            ImGui::SameLine();
+
+            //反选
+            if (ImGui::ImageButton("btn_inveri_icon", g_tex_pool["inveri"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+                InvertLV_OnListUi(ListUi_NowStart, ListUi_NowEnd, WasChose);
+
+            ImGui::SameLine();
+
+            //取消选择
+            if (ImGui::ImageButton("btn_offwhite_icon", g_tex_pool["offwhite"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+                OffWhiteLV_OnListUi(ListUi_NowStart, ListUi_NowEnd);
+
+            ImGui::SameLine();
+
+            //全选
+            if (ImGui::ImageButton("btn_allwhitey_icon", g_tex_pool["allwhitey"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+                AllWhiteLV_OnListUi(ListUi_NowStart, ListUi_NowEnd);
+
+            ImGui::SameLine();
+
+            // 粘贴
+            if (ImGui::ImageButton("btn_puckup_icon", g_tex_pool["puckup"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+            {         
+                g_HistoryMgr.SaveSnapshot();
+                PickUpLV_OnListUi(ListUi_NowEnd);
+            }
+
+            ImGui::SameLine();
+
+            //插入
+            if (ImGui::ImageButton("btn_content_duplicate_white_icon", g_tex_pool["content_duplicate_white"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+                ifInsertLV = true;
+
+            ImGui::SameLine();
+
+            //可见性
+            if (ImGui::ImageButton("remove_eye_white_icon", g_tex_pool["remove_eye_white"], IMAGESIZE, ImVec2(0, 0), ImVec2(1, 1)))
+            {
+                VisibilityLV_OnListUi();
+            }
+
+
         }
 
+
+        //说明
         ImGui::Text("Flood : %d      ",flood);
         ImGui::SameLine();
         if(NOW_LISTUIONCLICK==On_Laout) ImGui::Text("Laout");
@@ -549,72 +766,71 @@ void LVlist()
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1,1,1,floatBall_Alpha));
             ImGui::Text("OnClik \"( + Add )\" come to creat your ui");
-            ImGui::Text("Sfaui editor version : %0.2f",SFAUIED_VESION);
+            ImGui::Text("Sfaui editor version : %0.1f",SFAUIED_VESION);
             ImGui::Text("by Skyc 天C");
+            ImGui::Text("https://github.com/SKYCNB/Sfaui-Editor");
             ImGui::Text("本编辑器只支持比较小的控件布局设计，不支持多次导入");
+            ImGui::Text("暂不不支持指针类型");
             ImGui::Text("记得需时刻保存，防止编辑器的意外闪退导致布局数据消失");
             ImGui::Text("建议边编辑布局边导出代码和把代码运用于项目中");
             ImGui::PopStyleColor();
         }
 
+
+
+
+        //当面板不为空闲时自动弹出设置操作面板
         if(NOW_LISTUIONCLICK!=On_None)
-            SettingUi();
+            SettingLVUi_OnListUi();
+
 
         floodDoor = 0;
         ImGui::BeginChild("list", ImVec2(-1, -1));
+
+
         for(int i = ListUi_NowStart; i < ListUi_NowEnd; i++)
         {
+
             if(LVBuild[i]==flood+1)
-            {
                 floodDoor++; //only show the "Begin"
-            }
+
+            //过滤配套控件的末尾控件
             if(LVBuild[i]==0||LVBuild[i]==flood+1&&floodDoor%2!=0)
             {
+
                 auto arr = &All_mRNA[i];
                 if((*arr)[REALID].has_value()&&(*arr)[REALID].type()==typeid(std::string))
                 {
                     std::string id= any_cast<std::string>((*arr)[REALID]);  //reality id
 
-                    if(ifcontent_duplicate_white
-                            && ListUi_NowStart == dragStartCheck
-                            && ListUi_NowEnd == dragEndCheck
-                            && WasChose[i] != 1
-                            && std::find(WasChose.begin()+ListUi_NowStart, WasChose.begin()+ListUi_NowEnd, 1) != WasChose.begin()+ListUi_NowEnd)
+
+                    //插入功能和一些安全校验
+                    if(ifInsertLV
+                       && WasChose[i] != 1)
                     {
 
                         ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(0.22f, 0.78f, 0.48f, 1.0f));
-                        if(ImGui::Button(("点击此处插入 Click here to insert"+std::to_string(i)).c_str(), ImVec2(-1.0f,ButtonSIZE.y)))
-                        {
-                            g_HistoryMgr.SaveSnapshot();
 
-                            Help_mRNA base;
-
-                            for(int ifwaschosen = ListUi_NowStart; ifwaschosen < ListUi_NowEnd; ifwaschosen++) {
-                                if(WasChose[ifwaschosen]==1)
-                                {
-                                    base.mRNA.push_back(All_mRNA[ifwaschosen]);
-                                    base.LVBuild.push_back(LVBuild[ifwaschosen]);
-                                    base.Visibility.push_back(Visibility[ifwaschosen]);
-                                    base.WasChose.push_back(0);
-                                }
+                        if (CheckWasChose_OnAFlood_OnListUi(ListUi_NowStart,ListUi_NowEnd)) {
+                            if (ImGui::Button(("点击此处插入 Click here to insert" + std::to_string(i)).c_str(), ImVec2(-1.0f, ButtonSIZE.y)))
+                            {
+                                g_HistoryMgr.SaveSnapshot();
+                                InsertLV_OnListUi(i);
                             }
-                            All_mRNA.insert(All_mRNA.begin()+i,base.mRNA.begin(),base.mRNA.end());
-                            WasChose.insert(WasChose.begin()+i,base.WasChose.begin(),base.WasChose.end());
-                            Visibility.insert(Visibility.begin()+i,base.Visibility.begin(),base.Visibility.end());
-                            LVBuild.insert(LVBuild.begin()+i,base.LVBuild.begin(),base.LVBuild.end());
-                            ListUi_NowEnd+=base.mRNA.size();
-                            DeleteUi(ListUi_NowStart,ListUi_NowEnd);
-
-                            CloseDragInsertMode(); 
-                            //Make_undo();
+                        }
+                        else {
+                            ifInsertLV = false;
                         }
                         ImGui::PopStyleColor();
                     }
 
+                    //选中效果
                     if(WasChose[i]==1) {
                         ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(0.45f,0.18f,0.18f,0.35f));
                     }
                     else {
+
+                        //可见性效果
                         if(Visibility[i]==1) {
 
                             if(!cfg.followProjectStyle)
@@ -627,10 +843,15 @@ void LVlist()
                         }
                     }
 
+
+                    //列表按钮
                     if(ImGui::Button(id.c_str(), ImVec2(LVlistUi.x*0.8f,ButtonSIZE.y)))
                     {
-                        CloseDragInsertMode(); // 进入子布局强制关闭
+                        ifInsertLV = false; //在插入过程中点击按钮取消插入操作
                         ListUi_NowPos=i;
+
+
+                        //检测到时配套控件
                         if(LVBuild[ListUi_NowPos]==flood+1)
                         {
                             ImVec2 ffd=  FindFlood(ListUi_NowPos,LVBuild.size(),flood+1);
@@ -639,6 +860,8 @@ void LVlist()
                             flood++;
                             NOW_LISTUIONCLICK=On_Laout;
                         }
+
+                        //检测到是普通控件
                         if(LVBuild[ListUi_NowPos]==0)
                         {
                             ListUi_NowStart=ListUi_NowPos;
@@ -646,9 +869,12 @@ void LVlist()
                             NOW_LISTUIONCLICK=On_View;
                         }
 
+
                     }
                     ImGui::PopStyleColor();
                     ImGui::SameLine();
+
+
 
                     //列表勾选框
                     bool tmp = WasChose[i] != 0;
@@ -667,9 +893,13 @@ void LVlist()
                         }
                     }
 
+
+
                 }
             }
-            //为了过滤其他楼层的控件
+
+
+            //过滤其他楼层的控件
             if(LVBuild[i]==flood+1&&floodDoor%2!=0) {
                 for(int j = i+1; j < LVBuild.size(); j++) {
                     if(LVBuild[j]==flood+1)
@@ -850,10 +1080,17 @@ static bool OpenScreenVec2EditPopup(ImVec2& outResult)
 }
 
 
+
+
+
+
+
+
+
 // 控件参数可视化编辑面板
 // 适配类型：int、float、ImVec2、std::string、bool*、unsigned int(Flags)
 // 直接修改原数据，实时同步预览与代码导出
-void SettingUi() {
+void SettingLVUi_OnListUi() {
 
     if (ListUi_NowPos < 0 || ListUi_NowPos >= All_mRNA.size())
     {
@@ -1172,16 +1409,16 @@ void Sfaui_DrawLaout() {
         switch(NOW_SFAUILAOUT)
         {
         case ToSettingUi:
-            SettingUi();
+            SettingLVUi_OnListUi();
             break;
         case ToCreatUi:
             ImGui::Begin("Sfaui_listui", nullptr,LOCKLISTUI);
-            CreatUi(0);
+            CreateLVUi_OnListUi(0);
             ImGui::End();
             break;
         case ToListUi:
             ImGui::Begin("Sfaui_listui", nullptr,LOCKLISTUI);
-            LVlist();
+            LVlistUi();
             ImGui::End();
             break;
         case ToNoneUi:
@@ -1223,12 +1460,12 @@ void log(std::string s) {
 
     // 原有打印
     for (int i = 0; i < All_mRNA.size(); i++) {
-        auto &arr = All_mRNA[i];
+        auto& arr = All_mRNA[i];
         auto id = arr[REALID];
         ImGui::Text("%d:%s", LVBuild[i], any_cast<std::string>(id).c_str());
     }
 
-    
+
     ImGui::Separator();
     ImGui::Text("===== All_mRNA Full Data =====");
     for (int i = 0; i < All_mRNA.size(); ++i)

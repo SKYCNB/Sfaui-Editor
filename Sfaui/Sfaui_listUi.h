@@ -14,11 +14,14 @@ using namespace nonstd;
 //void UiCode();
 extern int ListUi_NowStart;
 extern int ListUi_NowEnd;
-void CreatUi(int type);
-void LVlist();
-void SettingUi();
+
+bool OffWhiteLV_OnListUi(int st, int en);
+bool AllWhiteLV_OnListUi(int st, int en);
+bool CreateLVUi_OnListUi(int type);
+void LVlistUi();
+void SettingLVUi_OnListUi();
 void Sfaui_DrawLaout();
 void log(std::string s);
-int translate(std::vector<any> to);
+bool translateLV_OnListUi(std::vector<any> to);
 
 #endif

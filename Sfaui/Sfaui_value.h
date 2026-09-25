@@ -16,16 +16,8 @@
 
 
 //存放全局变量的文件 File for storing global variables
-#define SFAUIED_VESION 1.1
+#define SFAUIED_VESION 1.2
 
-#define VLENUM  0
-#define PAIR  1
-#define  POS 2
-#define RANGE  3
-#define REALID  4
-#define PARAMNUM  5
-#define FUNCTIONNMAE  6
-#define PARAMST  7
 
 typedef struct Help_mRNA {
     std::vector<std::array<nonstd::any,20>> mRNA;
@@ -105,8 +97,6 @@ extern mRNAHistoryManager g_HistoryMgr;
 
 void AppendWidgetData(int lv, char chose, char visible);
 
-
-ImVec2 FindFlood(int start, int end, int floodf);
 
 //image size
 extern ImVec2 IMAGESIZE;

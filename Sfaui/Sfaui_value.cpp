@@ -98,42 +98,6 @@ void AppendWidgetData(int lv = 0, char chose = 1, char visible = 1)
     WasChose.push_back(chose);
     Visibility.push_back(visible);
 }
-
-ImVec2 FindFlood(int start, int end, int floodf) {
-    ImVec2 pair = { -1,-1 };
-    if (start > end || start<0 || end>LVBuild.size())
-    {
-        Sfaui_log("FindFlood error: start :%d, end :%d,LVBuild.size() :%d\n", start, end, LVBuild.size());
-        pair.x = 0;
-        pair.y = LVBuild.size();
-        return pair;
-    }
-    for (int i = start; i < end; i++) {
-        if (LVBuild[i] == floodf)
-        {
-            if (pair.x == -1)
-            {
-                pair = { (float)i,-1 };
-                continue;
-            }
-            if (pair.x != -1)
-            {
-                pair.y = (float)i;
-                break;
-            }
-        }
-    }
-    if (pair.x == -1 || pair.y == -1)
-    {
-        Sfaui_log("FindFlood error: start :%d, end :%d,LVBuild.size() :%d\n", start, end, LVBuild.size());
-        pair.x = 0;
-        pair.y = LVBuild.size();
-    }
-
-    return pair;
-}
-
-
 float SFAUI_SW=1920.0f; //屏幕宽
 float SFAUI_SH=1080.0f; //屏幕高
 

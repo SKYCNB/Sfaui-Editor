@@ -80,6 +80,12 @@ See LICENSE file for full license information.
 
 //v1.1 修复了一些文件问题
 // 2026-9-18
+
+//v1.2 改善了ListUI的代码，插入操作逻辑重置，把删除和插入操作进行了层级限制
+// 规定只能操作本楼层以及所选更高楼里的所有控件
+// 把安卓平台上的初始控件样式删去，让开发者更好的体验到imgui原生控件
+// 2026-9-25
+
 // SkyC for Android ImGui - Sfaui
 // 2026 Developed by skyc
 
