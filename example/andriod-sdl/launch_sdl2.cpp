@@ -109,54 +109,11 @@ int main(int, char**)
         &cfg
     );
 
-
-    ImGuiStyle& style = ImGui::GetStyle();
-
-    // 圆角设置
-    style.WindowRounding     = 12.0f;
-    style.ChildRounding      = 10.0f;
-    style.FrameRounding      = 8.0f;
-    style.PopupRounding      = 10.0f;
-
-    // 边框粗细
-    style.WindowBorderSize   = 1.0f;
-    style.FrameBorderSize    = 1.0f;
-    style.PopupBorderSize    = 1.0f;
-
-    // 内边距、间距
-    style.WindowPadding      = ImVec2(18.0f, 18.0f);
-    style.FramePadding       = ImVec2(12.0f, 10.0f);
-    style.ItemSpacing        = ImVec2(10.0f, 12.0f);
-    style.ItemInnerSpacing   = ImVec2(6.0f, 6.0f);
-
-    // 深蓝高级配色
-    ImVec4* colors = style.Colors;
-    colors[ImGuiCol_WindowBg]           = ImVec4(0.12f, 0.14f, 0.18f, 1.00f);
-    colors[ImGuiCol_FrameBg]            = ImVec4(0.18f, 0.20f, 0.26f, 1.00f);
-    colors[ImGuiCol_FrameBgHovered]     = ImVec4(0.25f, 0.28f, 0.36f, 1.00f);
-    colors[ImGuiCol_FrameBgActive]      = ImVec4(0.30f, 0.34f, 0.44f, 1.00f);
-    colors[ImGuiCol_Button]             = ImVec4(0.20f, 0.24f, 0.32f, 1.00f);
-    colors[ImGuiCol_ButtonHovered]      = ImVec4(0.28f, 0.34f, 0.46f, 1.00f);
-    colors[ImGuiCol_ButtonActive]       = ImVec4(0.35f, 0.42f, 0.56f, 1.00f);
-    colors[ImGuiCol_Header]             = ImVec4(0.16f, 0.18f, 0.22f, 1.00f);
-    colors[ImGuiCol_HeaderHovered]      = ImVec4(0.22f, 0.26f, 0.34f, 1.00f);
-    colors[ImGuiCol_HeaderActive]       = ImVec4(0.28f, 0.32f, 0.42f, 1.00f);
-    colors[ImGuiCol_Text]               = ImVec4(0.92f, 0.92f, 0.92f, 1.00f);
-
-    // 整体缩放  微调间距
-    style.ScaleAllSizes(3.0f);
-    style.WindowPadding     = ImVec2(15.0f, 15.0f);
-    style.ItemSpacing       = ImVec2(12.0f, 12.0f);
-    style.FramePadding      = ImVec2(10.0f, 8.0f);
-
-   
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-
     Sfaui_init("/sdcard/i.sam"); //init Sfaui editor
 
- 
     ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.15f, 1.00f);
     bool done = false;
     bool last = false;

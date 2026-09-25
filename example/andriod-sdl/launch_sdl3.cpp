@@ -57,7 +57,7 @@ struct AppState {
     bool imgui_ready = false;
     bool sfaui_ok = false;
     const char* glsl_version = "#version 100";
-    ImVec4 clear_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
 };
 }
 
@@ -95,48 +95,18 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     ImGuiIO& io = ImGui::GetIO();
     ImGui::StyleColorsDark();
 
-   
+    // 保留字体加载，其余样式全部移除
     ImFontConfig cfg;
     cfg.FontDataOwnedByAtlas = false;
     io.Fonts->AddFontFromMemoryTTF((void*)font_v, (int)font_v_size, 36.0f, &cfg);
 
-    
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding     = 12.0f;
-    style.ChildRounding      = 10.0f;
-    style.FrameRounding      = 8.0f;
-    style.PopupRounding      = 10.0f;
-    style.WindowBorderSize   = 1.0f;
-    style.FrameBorderSize    = 1.0f;
-    style.PopupBorderSize    = 1.0f;
-    style.WindowPadding      = ImVec2(18.0f, 18.0f);
-    style.FramePadding       = ImVec2(12.0f, 10.0f);
-    style.ItemSpacing        = ImVec2(10.0f, 12.0f);
-    style.ItemInnerSpacing   = ImVec2(6.0f, 6.0f);
-    ImVec4* colors = style.Colors;
-    colors[ImGuiCol_WindowBg]           = ImVec4(0.12f, 0.14f, 0.18f, 1.00f);
-    colors[ImGuiCol_FrameBg]            = ImVec4(0.18f, 0.20f, 0.26f, 1.00f);
-    colors[ImGuiCol_FrameBgHovered]     = ImVec4(0.25f, 0.28f, 0.36f, 1.00f);
-    colors[ImGuiCol_FrameBgActive]      = ImVec4(0.30f, 0.34f, 0.44f, 1.00f);
-    colors[ImGuiCol_Button]             = ImVec4(0.20f, 0.24f, 0.32f, 1.00f);
-    colors[ImGuiCol_ButtonHovered]      = ImVec4(0.28f, 0.34f, 0.46f, 1.00f);
-    colors[ImGuiCol_ButtonActive]       = ImVec4(0.35f, 0.42f, 0.56f, 1.00f);
-    colors[ImGuiCol_Header]             = ImVec4(0.16f, 0.18f, 0.22f, 1.00f);
-    colors[ImGuiCol_HeaderHovered]      = ImVec4(0.22f, 0.26f, 0.34f, 1.00f);
-    colors[ImGuiCol_HeaderActive]       = ImVec4(0.28f, 0.32f, 0.42f, 1.00f);
-    colors[ImGuiCol_Text]               = ImVec4(0.92f, 0.92f, 0.92f, 1.00f);
-    style.ScaleAllSizes(3.0f);
-    style.WindowPadding     = ImVec2(15.0f, 15.0f);
-    style.ItemSpacing       = ImVec2(12.0f, 12.0f);
-    style.FramePadding      = ImVec2(10.0f, 8.0f);
-
     ImGui_ImplSDL3_InitForOpenGL(win, glc);
     ImGui_ImplOpenGL3_Init("#version 100");
 
-    
+    // 安卓私有路径替换 /sdcard，解决权限崩溃
     bool sfaui_ok = false;
     try {
-        Sfaui_init("sdcard/Sfaui.sam");
+        Sfaui_init("");
         sfaui_ok = true;
     } catch(...) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Sfaui 文件打开失败");
@@ -207,7 +177,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
     }
 #endif
 
-   
+    // 输入法切换
     static bool last_textinput = false;
     if (io.WantTextInput != last_textinput)
     {
@@ -234,7 +204,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
-    
+    // 只有初始化成功才渲染编辑器
     if(st->sfaui_ok)
         Sfaui_editing();
 
